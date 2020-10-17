@@ -1,0 +1,14 @@
+$sm = 576px
+$md = 768px
+$lg = 992px
+$xl = 1100px
+
+media-break-point-up(nSize)
+  condition = 'screen and (min-width: %s)' % nSize
+  @media condition
+    {block}
+
+media-break-point-down(nSize)
+  condition = 'screen and (max-width: %s)' % nSize
+  @media condition
+    {block}
