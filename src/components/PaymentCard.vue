@@ -1,14 +1,12 @@
 <template>
   <div class="card card-shadow">
     <div class="card-body card-body-p-20">
-      <div class="card__nav nav nav-align-left">
+      <div v-if="state !== 3" class="card__nav nav nav-align-left">
         <a href="/" class="nav__back-button">
-          <img
-            src="../assets/icons/arrow_back.svg"
-            alt=""
-            class="nav__back-button__icon"
-          />
-          Back to cart</a
+          <span class="material-icons nav__back-button__icon">
+            keyboard_backspace
+          </span>
+          Back to {{ state === 2 ? 'delivery' : 'cart' }}</a
         >
       </div>
       <div class="card__content">
@@ -21,6 +19,7 @@
 <script>
 export default {
   name: 'PaymentCard',
+  props: ['state'],
 };
 </script>
 
@@ -51,8 +50,20 @@ export default {
         text-align: left;
       }
 
-      &__back-button__icon {
-        margin: 0 10px;
+      &__back-button {
+        display: flex;
+        align-items: center;
+        mix-blend-mode: normal;
+        opacity: 0.6;
+        transition: all 0.2s;
+
+        &:hover {
+          opacity: 0.8;
+        }
+
+        &__icon {
+          margin: 0 10px;
+        }
       }
     }
   }
