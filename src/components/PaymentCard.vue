@@ -2,12 +2,17 @@
   <div class="card card-shadow">
     <div class="card-body card-body-p-20">
       <div v-if="state !== 3" class="card__nav nav nav-align-left">
-        <a href="/" class="nav__back-button">
+        <button
+          href="/"
+          @click="handleClick"
+          class="nav__back-button"
+          :disabled="state < 2"
+        >
           <span class="material-icons nav__back-button__icon">
             keyboard_backspace
           </span>
-          Back to {{ state === 2 ? 'delivery' : 'cart' }}</a
-        >
+          Back to {{ state === 2 ? 'delivery' : 'cart' }}
+        </button>
       </div>
       <div class="card__content">
         <slot />
@@ -19,12 +24,13 @@
 <script>
 export default {
   name: 'PaymentCard',
-  props: ['state'],
+  props: ['state', 'handleClick'],
 };
 </script>
 
 <style lang="stylus">
 @import '../styles';
+@import '../theme/breakpoints';
 
 .card {
   background: $originWhite;
@@ -56,6 +62,14 @@ export default {
         mix-blend-mode: normal;
         opacity: 0.6;
         transition: all 0.2s;
+        outline: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+
+        +media-break-point-down($md) {
+          margin-top: 24px;
+        }
 
         &:hover {
           opacity: 0.8;

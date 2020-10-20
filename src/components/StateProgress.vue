@@ -19,25 +19,7 @@
 
 <script>
 export default {
-  data() {
-    return {
-      status: [
-        {
-          id: 1,
-          name: 'Delivery',
-        },
-        {
-          id: 2,
-          name: 'Payment',
-        },
-        {
-          id: 3,
-          name: 'Finish',
-        },
-      ],
-      actived: 2,
-    };
-  },
+  props: ['status', 'actived'],
 };
 </script>
 
