@@ -2,16 +2,28 @@
   <div class="home">
     <Container class="home__container">
       <div class="home__status">
-        <Status />
+        <Status :actived="currentState" :status="status" />
       </div>
-      <PaymentCard class="card" :state="currentState">
+      <PaymentCard class="card" :state="currentState" :handleClick="goBack">
         <Row class="row">
           <div class="row__switch">
-            <CheckoutDelivery v-if="currentState === 1" />
-            <CheckoutPayment v-if="currentState === 2" />
-            <CheckoutFinish v-if="currentState === 3" />
+            <keep-alive>
+              <component
+                ref="currentStep"
+                :is="currentStep"
+                :reset="resetState"
+                @update="collectForm"
+              />
+            </keep-alive>
           </div>
-          <CheckoutSummary class="row__summary" />
+          <CheckoutSummary
+            class="row__summary"
+            :status="currentState"
+            :isLastStep="isLastStep"
+            :handleClick="goNext"
+            :allowNext="allowNext"
+            :checkoutForm="form"
+          />
         </Row>
       </PaymentCard>
     </Container>
@@ -43,8 +55,74 @@ export default {
   },
   data() {
     return {
-      currentState: 3,
+      allowNext: false,
+      currentState: 1,
+      steps: [CheckoutDelivery, CheckoutPayment, CheckoutFinish],
+      status: [
+        {
+          id: 1,
+          name: 'Delivery',
+        },
+        {
+          id: 2,
+          name: 'Payment',
+        },
+        {
+          id: 3,
+          name: 'Finish',
+        },
+      ],
+      form: {
+        name: null,
+        phone: null,
+        address: null,
+        dropshipper: {
+          name: null,
+          phone: null,
+        },
+        shipment: null,
+        payment: null,
+      },
     };
+  },
+  // mounted() {
+  //   if (localStorage.currentState) {
+  //     this.currentState = localStorage.currentState;
+  //   }
+  // },
+  computed: {
+    currentStep() {
+      return this.steps[this.currentState - 1];
+    },
+    length() {
+      return this.steps.length;
+    },
+    isLastStep() {
+      return this.currentState === 3;
+    },
+  },
+  methods: {
+    collectForm(item) {
+      Object.assign(this.form, item.data);
+      this.allowNext = item.valid;
+      // localStorage.setItem('form', this.form);
+    },
+    goBack() {
+      this.currentState -= 1;
+      // localStorage.currentState = this.currentState;
+      this.allowNext = true;
+    },
+    goNext() {
+      this.currentState += 1;
+      // localStorage.currentState = this.currentState;
+      this.allowNext = !this.$refs.currentStep.$v.$invalid;
+    },
+    resetState() {
+      // localStorage.currentState = 1;
+      // localStorage.form = null;
+      // eslint-disable-next-line no-restricted-globals
+      location.reload();
+    },
   },
 };
 </script>
