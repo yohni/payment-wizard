@@ -1,3 +1,6 @@
+/* eslint-disable operator-linebreak */
+/* eslint-disable operator-linebreak */
+/* eslint-disable operator-linebreak */
 <template>
   <div class="delivery">
     <Row class="delivery__row header">
@@ -5,18 +8,28 @@
         <H1>Delivery details</H1>
       </div>
       <div class="header__checkbox checkbox">
-        <input id="aDropshipper" class="checkbox__input" type="checkbox" />
+        <input
+          id="aDropshipper"
+          class="checkbox__input"
+          type="checkbox"
+          v-model="dropshipperStatus"
+          @change="onSubmit"
+        />
         <label for="aDropshipper" class="checkbox__label">
           Send as dropshipper
         </label>
       </div>
     </Row>
 
-    <div class="delivery__form form">
+    <form class="delivery__form form" @input="onSubmit">
       <div class="form__padding">
         <Row class="row">
           <div class="col-size-7">
             <FloatInput
+              @model="$v.form.name.$model = $event"
+              :value="$v.form.name.$model"
+              :invalid="$v.form.name.$error"
+              :touched="$v.form.name.$dirty"
               type="text"
               name="name"
               id="name"
@@ -24,6 +37,10 @@
               label="Name"
             />
             <FloatInput
+              @model="$v.form.phone.$model = $event"
+              :value="$v.form.phone.$model"
+              :invalid="$v.form.phone.$error"
+              :touched="$v.form.phone.$dirty"
               type="text"
               name="phone"
               id="phone"
@@ -31,6 +48,10 @@
               label="Phone Number"
             />
             <FloatTextarea
+              @model="$v.form.address.$model = $event"
+              :value="$v.form.address.$model"
+              :invalid="$v.form.address.$error"
+              :touched="$v.form.address.$dirty"
               type="text"
               name="address"
               id="address"
@@ -38,15 +59,23 @@
               label="Delivery Address"
             />
           </div>
-          <div class="col-size-5">
+          <div v-if="dropshipperStatus" class="col-size-5">
             <FloatInput
+              @model="$v.form.dropshipper.name.$model = $event"
+              :value="$v.form.dropshipper.name.$model"
+              :invalid="$v.form.dropshipper.name.$error"
+              :touched="$v.form.dropshipper.name.$dirty"
               type="text"
               name="drop_name"
-              id=""
+              id="drop_name"
               class="input__name input_name"
               label="Dropshipper name"
             />
             <FloatInput
+              @model="$v.form.dropshipper.phone.$model = $event"
+              :value="$v.form.dropshipper.phone.$model"
+              :invalid="$v.form.dropshipper.phone.$error"
+              :touched="$v.form.dropshipper.phone.$dirty"
               type="text"
               name="drop_number"
               id="drop_number"
@@ -56,7 +85,7 @@
           </div>
         </Row>
       </div>
-    </div>
+    </form>
   </div>
 </template>
 
@@ -65,6 +94,7 @@ import Row from '@/components/layouts/MyRow.vue';
 import H1 from '@/components/MainHeading.vue';
 import FloatInput from '@/components/FloatInput.vue';
 import FloatTextarea from '@/components/FloatTextarea.vue';
+import { required } from '@vuelidate/validators';
 
 export default {
   name: 'CheckoutDelivery',
@@ -73,6 +103,76 @@ export default {
     FloatTextarea,
     Row,
     H1,
+  },
+  data() {
+    return {
+      dropshipperStatus: false,
+      form: {
+        name: '',
+        phone: '',
+        address: '',
+        dropshipper: {
+          name: '',
+          phone: '',
+        },
+      },
+    };
+  },
+  validations: {
+    form: {
+      name: {
+        required,
+      },
+      phone: {
+        required,
+        notPhone(phone) {
+          const regex = new RegExp(
+            /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/,
+          );
+          return regex.test(phone);
+        },
+      },
+      address: {
+        required,
+      },
+      dropshipper: {
+        name: {},
+        phone: {
+          notPhone(phone) {
+            const regex = new RegExp(
+              /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/,
+            );
+            return regex.test(phone);
+          },
+        },
+      },
+    },
+  },
+  methods: {
+    onSubmit() {
+      // handling invalid and requiredif of vuelidate not support vue 3
+      const valid1 = this.form.name !== ''
+        && this.form.phone !== ''
+        && this.form.address !== '';
+      const valid2 = this.dropshipperStatus
+        ? this.form.dropshipper.name !== ''
+          && this.form.dropshipper.phone !== ''
+        : !this.dropshipperStatus;
+
+      console.log(valid1, ' ', valid2, this.form.dropshipper.name);
+      this.$emit('update', {
+        data: {
+          name: this.form.name,
+          phone: this.form.phone,
+          address: this.form.address,
+          dropshipper: {
+            name: this.form.dropshipper.name,
+            phone: this.form.dropshipper.phone,
+          },
+        },
+        valid: !this.$v.$invalid && valid1 && valid2,
+      });
+    },
   },
 };
 </script>
@@ -89,6 +189,10 @@ export default {
 
     .checkbox {
       height: 22px;
+
+      +media-break-point-down($md) {
+        margin-top: 24px;
+      }
 
       &__input {
         position: absolute;

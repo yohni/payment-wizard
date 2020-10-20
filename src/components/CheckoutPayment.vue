@@ -31,6 +31,7 @@
 import Row from '@/components/layouts/MyRow.vue';
 import H1 from '@/components/MainHeading.vue';
 import FloatSelect from '@/components/FloatSelect.vue';
+import { required } from '@vuelidate/validators';
 
 export default {
   name: 'CheckoutPayment',
@@ -79,12 +80,36 @@ export default {
       pickedVia: '',
     };
   },
+  validations: {
+    form: {
+      shipment: {
+        required,
+      },
+      payment: {
+        required,
+      },
+    },
+  },
   methods: {
     setShipment(selectedItem) {
       this.pickedShipment = selectedItem;
+      const valid = this.pickedShipment !== '' && this.pickedVia !== '';
+      this.$emit('update', {
+        data: {
+          shipment: this.pickedShipment,
+        },
+        valid,
+      });
     },
     setVia(selectedItem) {
       this.pickedVia = selectedItem;
+      const valid = this.pickedShipment !== '' && this.pickedVia !== '';
+      this.$emit('update', {
+        data: {
+          payment: this.pickedVia,
+        },
+        valid,
+      });
     },
   },
 };

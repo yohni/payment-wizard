@@ -6,7 +6,7 @@
       <p class="finish__info">
         Your order will be delivered today with GO-SEND
       </p>
-      <button type="button" class="finish__btn">
+      <button type="button" class="finish__btn" @click="reset">
         <span class="material-icons finish__btn__icon">
           keyboard_backspace
         </span>
@@ -24,6 +24,7 @@ export default {
   components: {
     H1,
   },
+  props: ['reset'],
 };
 </script>
 
