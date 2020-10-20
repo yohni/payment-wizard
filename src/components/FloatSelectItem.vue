@@ -38,6 +38,11 @@ export default {
   transition: all 0.2s;
   position: relative;
 
+  +media-break-point-down($md) {
+    max-width: 100%;
+    margin-bottom: 12px;
+  }
+
   &__selected {
     background-color: rgba(27, 217, 123, 0.1);
     border: 2px solid $successGreen;
