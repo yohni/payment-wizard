@@ -1,9 +1,13 @@
 import { createApp } from 'vue';
-import App from './App.vue';
+import { VuelidatePlugin } from '@vuelidate/core';
 import router from './router';
+import App from './App.vue';
 import 'normalize.css';
 import '@/styles/index.styl';
 
-createApp(App)
-  .use(router)
-  .mount('#app');
+const app = createApp(App);
+app.config.devtools = true;
+app.config.productionTip = false;
+app.use(router);
+app.use(VuelidatePlugin);
+app.mount('#app');
